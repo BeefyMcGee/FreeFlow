@@ -1,7 +1,0 @@
-dim 8
-
-colour 1 orange 1 1 5 7
-colour 2 red 3 5 5 1
-colour 3 yellow 4 3 7 0
-colour 4 green 4 7 6 7
-colour 5 blue 5 4 7 7
