@@ -4,14 +4,12 @@ public class ConflictBasedSearch {
     
     private PuzzleBoard board;
 
-    private Stack<CTNode> nodeStack;
     private PriorityQueue<CTNode> nodeQueue;
     private HashSet<String> closedList;
 
     public ConflictBasedSearch(PuzzleBoard board) {
 
         this.board = board;
-        this.nodeStack = new Stack<CTNode>();
         this.nodeQueue = new PriorityQueue<CTNode>(Comparator.comparingInt(a -> a.getSolutionCost()));
         this.closedList = new HashSet<String>();
 
@@ -178,63 +176,3 @@ public class ConflictBasedSearch {
     }
 
 }
-
-
-
-
-// public Solution solve() {
-
-//     CTNode root = new CTNode();
-
-//     // Create list of initial constraints disallowing colours being on the goal/source squares of other colours
-//     ArrayList<Constraint> initialConstraints = new ArrayList<Constraint>();
-//     for (int endpointColour: board.getStartEndPairs().keySet()) {
-//         for (int invaderColour: board.getStartEndPairs().keySet()) {
-//             if (endpointColour == invaderColour) continue;
-
-//             int[] endpointLocations = board.getStartEndPairs().get(endpointColour);
-
-//             initialConstraints.add(new Constraint(invaderColour, new int[]{endpointLocations[0], endpointLocations[1]}));
-//             initialConstraints.add(new Constraint(invaderColour, new int[]{endpointLocations[2], endpointLocations[3]}));
-//         }
-//     }
-
-//     root.setConstraints(initialConstraints);
-//     nodeStack.add(root);
-
-//     while (!nodeStack.isEmpty()) {
-//         CTNode current = nodeStack.pop();
-//         //closedList.add(current);
-        
-//         Solution newSolution = findPaths(current);
-//         if (newSolution == null) {
-//             // No partial solution found
-//             continue;
-//         } else {
-//             printSolution(newSolution);
-
-//             // Partial solution found
-//             current.setSolution(newSolution);
-//             ArrayList<Conflict> conflictList = findConflicts(newSolution);
-
-//             // Full solution found
-//             if (conflictList.isEmpty()) return current.getSolution();
-
-//             Conflict nextConflict = conflictList.get(0);
-
-//             for (int agentId: nextConflict.getViolatingAgents()) {
-//                 ArrayList<Constraint> newConstraints = new ArrayList<Constraint>(current.getConstraints());
-//                 newConstraints.add(new Constraint(agentId, intToCoords(nextConflict.getPosition())));
-
-//                 CTNode childNode = new CTNode(newConstraints);
-//                 nodeStack.add(childNode);
-//             };
-//         }
-
-//     }
-
-//     // No full solution found
-//     System.out.println("Unsolvable!");
-//     return null;
-
-// }
