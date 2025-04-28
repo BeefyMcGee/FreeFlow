@@ -17,9 +17,23 @@ public class App extends Application {
     public static void main(String[] args) throws Exception {
 
         PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles");
-        board = gen.readFile("9x9_2.txt");
+        ArrayList<Long> times = new ArrayList<>();
 
-        launch(args);
+        for (int i = 0; i < 150; i++) {
+            PuzzleBoard currBoard = gen.readFile("levelpack_1.txt", i);
+
+            System.out.println("Attempting puzzle " + i + "...");
+            long start = System.currentTimeMillis();
+            ConflictBasedSearch cbs = new ConflictBasedSearch(currBoard);
+            cbs.solveWithWeights();
+            long duration = System.currentTimeMillis() - start;
+            times.add(duration);
+            System.out.println("Puzzle " + i + " complete in " + duration + "ms.");
+        }
+
+
+        //board = gen.readFile("levelpack_1.txt", 1);
+        //launch(args);
 
     }
 
@@ -31,10 +45,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles");
+        board = gen.readFile("levelpack_1.txt", 0);
+        
         grid = new GridPane();
         drawStartingGrid();
 
         Button solveBtn = new Button("Solve");
+        Button nextBtn = new Button("Next");
+        Button prevBtn = new Button("Previous");
+
         solveBtn.setOnAction(e -> {
             long start = System.currentTimeMillis();
 
@@ -44,7 +64,7 @@ public class App extends Application {
             System.out.println("Execution time: " + (System.currentTimeMillis() - start) + "ms");
         });
 
-        VBox layout = new VBox(10, grid, solveBtn);
+        VBox layout = new VBox(10, grid, prevBtn, nextBtn);
         layout.setAlignment(Pos.CENTER);
         Scene scene = new Scene(layout);
         primaryStage.setScene(scene);

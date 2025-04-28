@@ -75,7 +75,7 @@ public class ConflictBasedSearch {
                     childNode.setSolutionCost(childConflicts.size());
                     nodeQueue.add(childNode);
 
-                    printSolution(childSolution);
+                    //printSolution(childSolution);
                 }
             };
 
