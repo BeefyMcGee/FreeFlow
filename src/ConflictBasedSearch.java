@@ -6,12 +6,14 @@ public class ConflictBasedSearch {
 
     private PriorityQueue<CTNode> nodeQueue;
     private HashSet<String> closedList;
+    private boolean solved;
 
     public ConflictBasedSearch(PuzzleBoard board) {
 
         this.board = board;
         this.nodeQueue = new PriorityQueue<CTNode>(Comparator.comparingInt(a -> a.getSolutionCost()));
         this.closedList = new HashSet<String>();
+        this.solved = false;
 
     }
 
@@ -84,6 +86,92 @@ public class ConflictBasedSearch {
         // Puzzle is unsolvable
         System.out.println("Unsolvable!");
         return null;
+
+    }
+
+    public Solution setupStepByStep() {
+
+        CTNode root = new CTNode();
+
+        // Create list of initial constraints disallowing colours being on the goal/source squares of other colours
+        ArrayList<Constraint> initialConstraints = new ArrayList<Constraint>();
+        for (int endpointColour: board.getStartEndPairs().keySet()) {
+            for (int invaderColour: board.getStartEndPairs().keySet()) {
+                if (endpointColour == invaderColour) continue;
+
+                int[] endpointLocations = board.getStartEndPairs().get(endpointColour);
+
+                initialConstraints.add(new Constraint(invaderColour, new int[]{endpointLocations[0], endpointLocations[1]}));
+                initialConstraints.add(new Constraint(invaderColour, new int[]{endpointLocations[2], endpointLocations[3]}));
+            }
+        }
+
+        root.setConstraints(initialConstraints);
+        Solution rootSolution = findPaths(root, null);
+        if (rootSolution == null) {
+            // Invalid puzzle entered
+            System.out.println("Invalid Puzzle");
+            return null;
+        }
+        root.setSolution(rootSolution);
+        ArrayList<Conflict> rootConflicts = findConflicts(rootSolution);
+        if (rootConflicts.isEmpty()) {
+            solved = true;
+            return rootSolution;
+        }
+        root.setConflictList(rootConflicts);
+        nodeQueue.add(root);
+
+        return root.getSolution();
+
+    }
+
+    public Solution solveOneStep() {
+
+        if (nodeQueue.isEmpty()) {
+            System.out.println("Unsolvable!");
+            return null;
+        }
+
+        CTNode current = nodeQueue.poll();
+        ArrayList<Conflict> conflictList = current.getConflictList();
+
+        Conflict nextConflict = conflictList.get(0);
+        for (int agentId: nextConflict.getViolatingAgents()) {
+            // Make new node with additional constraint
+            ArrayList<Constraint> newConstraints = new ArrayList<Constraint>(current.getConstraints());
+            newConstraints.add(new Constraint(agentId, intToCoords(nextConflict.getPosition())));
+            CTNode childNode = new CTNode(newConstraints);
+
+            // Check if node has previously been visited
+            String constraintSignature = childNode.getConstraintSignature();
+            if (closedList.contains(constraintSignature)) continue;
+            closedList.add(constraintSignature);
+
+            // Generate paths with A*
+            Solution childSolution = findPaths(childNode, current.getSolution());
+            if (childSolution == null) continue; // No paths possible for this node
+
+            // Find path conflicts
+            ArrayList<Conflict> childConflicts = findConflicts(childSolution);
+            if (childConflicts.isEmpty()) {
+                solved = true;
+                return childSolution; // Puzzle solution found
+            } else {
+                childNode.setSolution(childSolution);
+                childNode.setConflictList(childConflicts);
+                childNode.setSolutionCost(childConflicts.size());
+                nodeQueue.add(childNode);
+            }
+        };
+
+        return current.getSolution();
+
+    }
+
+    public boolean isSolved() {
+
+        return solved;
 
     }
 

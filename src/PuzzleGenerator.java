@@ -1,5 +1,9 @@
 import java.io.File;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class PuzzleGenerator {
@@ -7,10 +11,13 @@ public class PuzzleGenerator {
     private String folderPath;
 
     PuzzleGenerator(String folderPath) {
+
         this.folderPath = folderPath;
+
     }
 
     public PuzzleBoard readFile(String fileName, int puzzleIndex) {
+
         PuzzleBoard newBoard = new PuzzleBoard();
 
         try {
@@ -35,9 +42,11 @@ public class PuzzleGenerator {
         }
 
         return newBoard;
+
     }
 
     private void parsePuzzleLine(String line, PuzzleBoard board) {
+
         String[] sections = line.split(";");
         String[] header = sections[0].split(",");
 
@@ -55,9 +64,11 @@ public class PuzzleGenerator {
             }
             addPathToBoard(path, colourId++, board, size);
         }
+
     }
 
     private void addPathToBoard(int[] path, int colourId, PuzzleBoard board, int size) {
+        
         if (path.length == 0) return;
 
         // First and last are the endpoints
@@ -69,12 +80,23 @@ public class PuzzleGenerator {
         int endRow = endIndex / size;
         int endCol = endIndex % size;
 
-        String[] colorNames = {"red", "blue", "yellow", "green", "orange", "cyan", "magenta", "darkviolet", "deeppink", "white", "lime", "salmon", "tan", "brown", "gray", "lightseagreen", "dodgerblue"};
+        String[] colorNames = {"red", "green", "blue", "yellow", "orange", "cyan", "magenta", "maroon", "darkviolet", "white", "gray", "lime", "tan", "brown", "dodgerblue", "lightseagreen"};
 
-        // Color name could be anything or just use "color" + id
         board.addColour(colourId, colorNames[colourId - 1]);
         board.addStartEndPair(colourId, startRow, startCol, endRow, endCol);
 
-        // (optional) If you want, you could also store the full path in the board for validation
     }
+
+    public long getFileLength(String fileName) {
+
+        Path path = Paths.get(folderPath + "/" + fileName);
+
+        try {
+            return Files.lines(path).count();
+        } catch (IOException e) {
+            return 0;
+        }
+
+    }
+
 }
