@@ -2,11 +2,11 @@ import java.util.*;
 
 public class ConflictBasedSearch {
     
-    private PuzzleBoard board;
+    protected PuzzleBoard board;
 
-    private PriorityQueue<CTNode> nodeQueue;
-    private HashSet<String> closedList;
-    private boolean solved;
+    protected PriorityQueue<CTNode> nodeQueue;
+    protected HashSet<String> closedList;
+    protected boolean solved;
 
     public ConflictBasedSearch(PuzzleBoard board) {
 

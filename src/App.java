@@ -66,18 +66,28 @@ public class App extends Application {
         grid = new GridPane();
         drawStartingGrid();
 
-        Button solveBtn = new Button("Solve");
+        Button solveBtn = new Button("Solve (MA-CBS)");
         Button nextBtn = new Button("Next");
         Button prevBtn = new Button("Previous");
         Button solveSBS = new Button("Solve Step By Step");
+        Button solveCBS = new Button("Solve (CBS)");
 
         solveBtn.setOnAction(e -> {
+            long start = System.currentTimeMillis();
+
+            MultiAgentConflictBasedSearch maCbs = new MultiAgentConflictBasedSearch(board);
+            drawSolution(maCbs.solveWithWeights());
+
+            System.out.println("MA-CBS Execution time: " + (System.currentTimeMillis() - start) + "ms");
+        });
+
+        solveCBS.setOnAction(e -> {
             long start = System.currentTimeMillis();
 
             ConflictBasedSearch cbs = new ConflictBasedSearch(board);
             drawSolution(cbs.solveWithWeights());
 
-            System.out.println("Execution time: " + (System.currentTimeMillis() - start) + "ms");
+            System.out.println("CBS Execution time: " + (System.currentTimeMillis() - start) + "ms");
         });
 
         nextBtn.setOnAction(e -> {
@@ -124,7 +134,7 @@ public class App extends Application {
             timeline.play();
         });
 
-        VBox layout = new VBox(10, grid, solveBtn, prevBtn, nextBtn, solveSBS);
+        VBox layout = new VBox(10, grid, solveBtn, solveCBS, prevBtn, nextBtn, solveSBS);
         layout.setAlignment(Pos.CENTER);
         Scene scene = new Scene(layout);
         primaryStage.setScene(scene);
