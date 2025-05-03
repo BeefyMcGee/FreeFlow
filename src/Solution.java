@@ -3,13 +3,10 @@ import java.util.*;
 public class Solution {
     
     private HashMap<Integer, ArrayList<int[]>> paths;
-    // private HashMap<Integer, ArrayList<Integer>> gridMap;
-    // private int gridSize;
 
     Solution() {
 
         this.paths = new HashMap<Integer, ArrayList<int[]>>();
-        // this.gridMap = new HashMap<Integer, ArrayList<Integer>>();
 
     }
 

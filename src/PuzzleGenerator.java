@@ -16,6 +16,7 @@ public class PuzzleGenerator {
 
     }
 
+    // Reads the entire puzzle file and returns the puzzle located at the specified line (puzzleIndex)
     public PuzzleBoard readFile(String fileName, int puzzleIndex) {
 
         PuzzleBoard newBoard = new PuzzleBoard();
@@ -45,6 +46,41 @@ public class PuzzleGenerator {
 
     }
 
+    // Returns the longest path length in the specified puzzle's solution
+    public int getLongestPathLength(String fileName, int puzzleIndex) {
+
+        int longestPathLength = 0;
+
+        try {
+            File puzzleFile = new File(folderPath + "/" + fileName);
+            Scanner fileScanner = new Scanner(puzzleFile);
+
+            // Read all puzzles line by line
+            int currentLine = 0;
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (currentLine == puzzleIndex) {
+                    // Parse this puzzle
+                    String[] sections = line.split(";");
+                    for (int i = 1; i < sections.length; i++) {
+                        String[] pathStr = sections[i].split(",");
+                        longestPathLength = Math.max(longestPathLength, pathStr.length);
+                    }
+                    break;
+                }
+                currentLine++;
+            }
+
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+
+        return longestPathLength;
+
+    }
+
+    // Reads the puzzle line from the file and parses it into a PuzzleBoard object
     private void parsePuzzleLine(String line, PuzzleBoard board) {
 
         String[] sections = line.split(";");
@@ -67,6 +103,7 @@ public class PuzzleGenerator {
 
     }
 
+    // Adds the two endpoints of a new colour to the puzzle board
     private void addPathToBoard(int[] path, int colourId, PuzzleBoard board, int size) {
         
         if (path.length == 0) return;
@@ -87,6 +124,7 @@ public class PuzzleGenerator {
 
     }
 
+    // Returns the number of lines in the file, which is the number of puzzles
     public long getFileLength(String fileName) {
 
         Path path = Paths.get(folderPath + "/" + fileName);

@@ -3,10 +3,10 @@ import java.util.*;
 public class ConflictBasedSearch {
     
     private PuzzleBoard board;
-
     private PriorityQueue<CTNode> nodeQueue;
     private HashSet<String> closedList;
     private boolean solved;
+    private int nodesExpanded, nodesGenerated;
 
     public ConflictBasedSearch(PuzzleBoard board) {
 
@@ -14,9 +14,12 @@ public class ConflictBasedSearch {
         this.nodeQueue = new PriorityQueue<CTNode>(Comparator.comparingInt(a -> a.getSolutionCost()));
         this.closedList = new HashSet<String>();
         this.solved = false;
+        this.nodesExpanded = 0;
+        this.nodesGenerated = 0;
 
     }
 
+    // Run the CBS algorithm to find a solution to the puzzle, using conflict numbers as weights to prioritise nodes
     public Solution solveWithWeights() {
 
         CTNode root = new CTNode();
@@ -48,8 +51,11 @@ public class ConflictBasedSearch {
         nodeQueue.add(root);
 
         while (!nodeQueue.isEmpty()) {
+            // Get the node with the lowest cost from the queue
             CTNode current = nodeQueue.poll();
             ArrayList<Conflict> conflictList = current.getConflictList();
+            // Record new node expansion
+            nodesExpanded++;
 
             Conflict nextConflict = conflictList.get(0);
             for (int agentId: nextConflict.getViolatingAgents()) {
@@ -62,6 +68,9 @@ public class ConflictBasedSearch {
                 String constraintSignature = childNode.getConstraintSignature();
                 if (closedList.contains(constraintSignature)) continue;
                 closedList.add(constraintSignature);
+
+                // Record new node generation
+                nodesGenerated++;
 
                 // Generate paths with A*
                 Solution childSolution = findPaths(childNode, current.getSolution());
@@ -76,8 +85,6 @@ public class ConflictBasedSearch {
                     childNode.setConflictList(childConflicts);
                     childNode.setSolutionCost(childConflicts.size());
                     nodeQueue.add(childNode);
-
-                    //printSolution(childSolution);
                 }
             };
 
@@ -89,6 +96,7 @@ public class ConflictBasedSearch {
 
     }
 
+    // Perform only the first initialisation step of the CBS algorithm by creating the root node of the CT
     public Solution setupStepByStep() {
 
         CTNode root = new CTNode();
@@ -126,6 +134,7 @@ public class ConflictBasedSearch {
 
     }
 
+    // Perform one step of the CBS algorithm by expanding the first node in the queue and generating its children
     public Solution solveOneStep() {
 
         if (nodeQueue.isEmpty()) {
@@ -169,12 +178,14 @@ public class ConflictBasedSearch {
 
     }
 
+    // Return whether the puzzle has been solved or not
     public boolean isSolved() {
 
         return solved;
 
     }
 
+    // Runs the low-level A* pathfinding algorithm to find a solution for the given node
     public Solution findPaths(CTNode node, Solution prevSolution) {
 
         PathFinder pf = new PathFinder(board, node.getConstraints());
@@ -183,6 +194,7 @@ public class ConflictBasedSearch {
 
     }
 
+    // Find all conflicts in the given solution
     public ArrayList<Conflict> findConflicts(Solution solution) {
 
         HashMap<Integer, ArrayList<Integer>> gridOccupants = new HashMap<Integer, ArrayList<Integer>>();
@@ -220,47 +232,142 @@ public class ConflictBasedSearch {
 
     }
 
+    // Convert a 2D coordinate to a single integer square id
     public int coordsToInteger(int[] pos) {
 
         return pos[0] * board.getSize() + pos[1];
 
     }
 
+    // Convert a single integer square id to a 2D coordinate
     public int[] intToCoords(int intCoord) {
 
         return new int[]{Math.floorDiv(intCoord, board.getSize()), intCoord % board.getSize()};
 
     }
 
-    public void printSolution(Solution solution) {
+    // Return the number of nodes expanded (non-leaf nodes) in the search tree
+    public int getNodesExpanded() {
 
-        System.out.println();
+        return nodesExpanded;
 
-        String[][] grid = new String[board.getSize()][board.getSize()];
+    }
 
-        for (int pathId: solution.getAgents()) {
-            ArrayList<int[]> path = solution.getPath(pathId);
+    // Return the number of nodes generated in the search tree
+    public int getNodesGenerated() {
 
-            for (int[] pos: path) {
-                if (grid[pos[0]][pos[1]] == null) {
-                    grid[pos[0]][pos[1]] = String.valueOf(pathId);
-                } else {
-                    grid[pos[0]][pos[1]] = "#";
-                }
-            }
+        return nodesGenerated;
+
+    }
+
+    private class CTNode {
+
+        private ArrayList<Constraint> constraints;
+        private Solution solution;
+        private ArrayList<Conflict> conflictList;
+        int solutionCost;
+
+        CTNode() {
+
+            constraints = new ArrayList<Constraint>();
+
         }
 
-        for (int row = 0; row < board.getSize(); row++) {
-            System.out.print("\n");
-            for (int cell = 0; cell < board.getSize(); cell++) {
-                if (grid[row][cell] == null) {
-                    System.out.print("▢ ");
-                } else {
-                    System.out.print(grid[row][cell] + " ");
-                }
-            }
+        CTNode(ArrayList<Constraint> constraints) {
+
+            this.constraints = constraints;
+
         }
 
+        public void setConflictList(ArrayList<Conflict> conflictList) {
+
+            this.conflictList = conflictList;
+
+        }
+
+        public ArrayList<Conflict> getConflictList() {
+
+            return conflictList;
+
+        }
+
+        public void setConstraints(ArrayList<Constraint> constraints) {
+
+            this.constraints = constraints;
+
+        }
+
+        public ArrayList<Constraint> getConstraints() {
+
+            return constraints;
+
+        }
+
+        public String getConstraintSignature() {
+
+            if (constraints.isEmpty()) return null;
+
+            ArrayList<String> constraintStrings = new ArrayList<String>();
+            for (Constraint constraint: constraints) {
+                constraintStrings.add(constraint.getAgentId() + ":" + constraint.getPos()[0] + "," + constraint.getPos()[1]);
+            }
+            Collections.sort(constraintStrings);
+
+            return String.join("|", constraintStrings);
+
+        }
+        
+        public Solution getSolution() {
+
+            return solution;
+
+        }
+        
+        public void setSolution(Solution solution) {
+
+            this.solution = solution;
+
+        }
+        
+        public int getSolutionCost() {
+
+            return solutionCost;
+
+        }
+        
+        public void setSolutionCost(int solutionCost) {
+
+            this.solutionCost = solutionCost;
+
+        }
+
+    }
+
+    private class Conflict {
+    
+        private int pos;
+        private ArrayList<Integer> violatingAgents;
+    
+        Conflict(int pos, ArrayList<Integer> violatingAgents) {
+    
+            this.pos = pos;
+    
+            this.violatingAgents = violatingAgents;
+    
+        }
+    
+        public int getPosition() {
+    
+            return pos;
+    
+        }
+    
+        public ArrayList<Integer> getViolatingAgents() {
+    
+            return violatingAgents;
+    
+        }
+    
     }
 
 }

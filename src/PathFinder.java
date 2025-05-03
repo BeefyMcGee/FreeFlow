@@ -12,6 +12,7 @@ public class PathFinder {
 
     }
 
+    // Run A* algorithm for a single agent
     public ArrayList<int[]> solveSingleAgent(int id) {
 
         int[] startEndPair = board.getStartEndPairs().get(id);
@@ -54,6 +55,7 @@ public class PathFinder {
 
     }
 
+    // Check if the position is valid for the agent
     public boolean isValid(int id, int[] pos) {
 
         // Check if off board
@@ -68,12 +70,14 @@ public class PathFinder {
 
     }
 
+    // Convert x, y coordinates to integer
     public int coordsToInteger(int[] pos) {
 
         return pos[0] * board.getSize() + pos[1];
 
     }
 
+    // Solve the puzzle using A* algorithm
     public Solution solve(Solution prevSolution) {
 
         Solution solution = new Solution();
@@ -106,34 +110,75 @@ public class PathFinder {
 
     }
 
-    // Checks if the solution is even possible
-    // public boolean possibilityCheck(Solution solution) {
+    private class PathFinderNode {
+        
+        private ArrayList<int[]> path;
+        private int[] source, goal, currentPos;
 
-    //     int[][] moveOperations = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-    //     ArrayList<Integer>[][] grid = new ArrayList<Integer>[board.getSize()][board.getSize()];
+        PathFinderNode(int[] startEndPair, int boardSize) {
 
-    //     for (int pathId: solution.getAgents()) {
-    //         ArrayList<int[]> path = solution.getPath(pathId);
+            this.source = new int[]{startEndPair[0], startEndPair[1]};
+            this.goal = new int[]{startEndPair[2], startEndPair[3]};
 
-    //         for (int[] pos: path) {
-    //             if (grid[pos[0]][pos[1]] == 0) {
-    //                 grid[pos[0]][pos[1]] = String.valueOf(pathId);
-    //             } else {
-    //                 grid[pos[0]][pos[1]] = "#";
-    //             }
-    //         }
-    //     }
+            this.currentPos = new int[]{startEndPair[0], startEndPair[1]};
 
-    //     for (int agentId: board.getStartEndPairs().keySet()) {
-    //         int[] endpointLocations = board.getStartEndPairs().get(agentId);
-            
-    //         boolean blocked = true;
-    //         for (int[] direction: moveOperations) {
-    //             if ()
-    //         }
+            this.path = new ArrayList<int[]>();
+            this.path.add(new int[]{startEndPair[0], startEndPair[1]});
 
-    //     }
+        }
 
-    // }
+        @SuppressWarnings("unchecked")
+        PathFinderNode(PathFinderNode parent, int[] moveOperation) {
+
+            this.source = parent.source;
+            this.goal = parent.goal;
+
+            int newX = parent.currentPos[0] + moveOperation[0];
+            int newY = parent.currentPos[1] + moveOperation[1];
+
+            this.currentPos = new int[]{newX, newY};
+
+            this.path = (ArrayList<int[]>) parent.path.clone();
+            this.path.add(currentPos);
+
+        }
+
+        // Get the current position of the agent
+        public int[] getCurrentPos() {
+
+            return currentPos;
+
+        }
+
+        // Get the path taken by the agent
+        public ArrayList<int[]> getPath() {
+
+            return path;
+
+        }
+
+        // Calculate the fitness of the node using the function f(x) = h(x) + c(x)
+        public int fitness() {
+
+            // c(x) is the total length the current path
+            int c = path.size();
+
+            // h(x) is the total manhattan distance from current pos to goal
+            int h = Math.abs(currentPos[0] - goal[0]) + Math.abs(currentPos[1] - goal[1]);
+
+            // f(x) is h + c
+            return h + c;
+
+        }
+
+        // Check if the agent's current position is at the goal
+        public boolean isAtGoal() {
+
+            return (currentPos[0] == goal[0] && currentPos[1] == goal[1]);
+
+        }
+
+    }
+
 
 }

@@ -25,9 +25,24 @@ public class App extends Application {
         //testPuzzleFile("levelpack_10x10.txt");
 
         //board = gen.readFile("levelpack_1.txt", 1);
-        currentPuzzleIndex = 127;
-        puzzleFile = "levelpack_1.txt";
-        launch(args);
+        // currentPuzzleIndex = 150;
+        // puzzleFile = "levelpack_6x6.txt";
+        // launch(args);
+
+        AlgorithmTester tester = new AlgorithmTester();
+        // tester.testAlgorithm("levelpack_5x5.txt", "test_results_5x5");
+        // tester.testAlgorithm("levelpack_6x6.txt", "test_results_6x6");
+        // tester.testAlgorithm("levelpack_7x7.txt", "test_results_7x7");
+        // tester.testAlgorithm("levelpack_8x8.txt", "test_results_8x8"); 
+        tester.testAlgorithm("levelpack_9x9.txt", "test_results_9x9", 1);
+        tester.testAlgorithm("levelpack_10x10.txt", "test_results_10x10", 1);
+        tester.testAlgorithm("levelpack_11x11.txt", "test_results_11x11", 1);
+        tester.testAlgorithm("levelpack_12x12.txt", "test_results_12x12", 1);
+        tester.testAlgorithm("levelpack_13x13.txt", "test_results_13x13", 1);
+        tester.testAlgorithm("levelpack_14x14.txt", "test_results_14x14", 1);
+
+        System.out.println("All tests complete.");
+        System.exit(0);
 
     }
 
