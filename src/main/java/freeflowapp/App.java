@@ -45,7 +45,7 @@ public class App extends Application {
         // PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles/Test Data");
         // board = gen.readFile("levelpack_8x8.txt", 1);
         currentPuzzleIndex = 0;
-        puzzleFile = "levelpack_7x7.txt";
+        puzzleFile = "levelpack_comb.txt";
         launch(args);
 
     }
