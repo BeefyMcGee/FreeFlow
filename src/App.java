@@ -22,48 +22,30 @@ public class App extends Application {
 
     public static void main(String[] args) throws Exception {
 
-        //testPuzzleFile("levelpack_10x10.txt");
+        ///////////////////////////////////////////
+        // TESTER IMPLEMENTATION
+        ///////////////////////////////////////////
 
-        //board = gen.readFile("levelpack_1.txt", 1);
-        // currentPuzzleIndex = 150;
-        // puzzleFile = "levelpack_6x6.txt";
-        // launch(args);
+        // AlgorithmTester tester = new AlgorithmTester();
 
-        AlgorithmTester tester = new AlgorithmTester();
         // tester.testAlgorithm("levelpack_5x5.txt", "test_results_5x5");
         // tester.testAlgorithm("levelpack_6x6.txt", "test_results_6x6");
-        // tester.testAlgorithm("levelpack_7x7.txt", "test_results_7x7");
-        // tester.testAlgorithm("levelpack_8x8.txt", "test_results_8x8"); 
-        tester.testAlgorithm("levelpack_9x9.txt", "test_results_9x9", 1);
-        tester.testAlgorithm("levelpack_10x10.txt", "test_results_10x10", 1);
-        tester.testAlgorithm("levelpack_11x11.txt", "test_results_11x11", 1);
-        tester.testAlgorithm("levelpack_12x12.txt", "test_results_12x12", 1);
-        tester.testAlgorithm("levelpack_13x13.txt", "test_results_13x13", 1);
-        tester.testAlgorithm("levelpack_14x14.txt", "test_results_14x14", 1);
 
-        System.out.println("All tests complete.");
-        System.exit(0);
+        // tester.testSinglePuzzle("levelpack_12x12.txt", 0, 1);
+        // tester.testSinglePuzzle("levelpack_8x8.txt", 50, 3);
 
-    }
+        // System.out.println("All tests complete.");
+        // System.exit(0);
 
-    public static ArrayList<Long> testPuzzleFile(String fileName) {
-
-        PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles");
-        ArrayList<Long> times = new ArrayList<>();
-
-        for (int i = 0; i < gen.getFileLength(fileName); i++) {
-            PuzzleBoard currBoard = gen.readFile(fileName, i);
-
-            System.out.println("Attempting puzzle " + i + "...");
-            long start = System.currentTimeMillis();
-            ConflictBasedSearch cbs = new ConflictBasedSearch(currBoard);
-            cbs.solveWithWeights();
-            long duration = System.currentTimeMillis() - start;
-            times.add(duration);
-            System.out.println("Puzzle " + i + " complete in " + duration + "ms.");
-        }
-
-        return times;
+        ///////////////////////////////////////////
+        // GUI IMPLEMENTATION
+        ///////////////////////////////////////////
+    
+        // PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles/Test Data");
+        // board = gen.readFile("levelpack_8x8.txt", 1);
+        currentPuzzleIndex = 0;
+        puzzleFile = "levelpack_7x7.txt";
+        launch(args);
 
     }
 
@@ -75,9 +57,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles");
+        PuzzleGenerator gen = new PuzzleGenerator("src/Puzzles/Test Data");
         board = gen.readFile(puzzleFile, currentPuzzleIndex);
-        
+
         grid = new GridPane();
         drawStartingGrid();
 
@@ -166,6 +148,8 @@ public class App extends Application {
     }
 
     private void drawSolution(Solution solution) {
+
+        drawStartingGrid();
 
         for (int colourId: solution.getAgents()) {
             ArrayList<int[]> path = solution.getPath(colourId);
