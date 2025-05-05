@@ -4,7 +4,7 @@ The program should be run using gradle.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/FreeFlow.git
+    git clone https://github.com/BeefyMcGee/FreeFlow.git
     cd FreeFlow
     ```
 
