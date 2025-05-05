@@ -1,18 +1,15 @@
-## Getting Started
+## Running the Program with gradle
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+The program should be run using gradle.
 
-## Folder Structure
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/FreeFlow.git
+    cd FreeFlow
+    ```
 
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+2. Run the project using Gradle:
+    ```bash
+    ./gradlew run
+    ```
+The main file is src/main/java/App.java. By default, this file is set to use the GUI implementation, but you can toggle this by commenting out that part of main() and uncommenting the algorithm tester code snippet.

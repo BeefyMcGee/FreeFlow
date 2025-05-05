@@ -25,4 +25,7 @@ replay_pid*
 
 # Folder Paths
 /bin/
+/lib/
 /.vscode/
+/.gradle/
+/build/

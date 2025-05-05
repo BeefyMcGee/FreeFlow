@@ -1,3 +1,4 @@
+package freeflowapp;
 import java.util.*;
 
 public class PathFinder {

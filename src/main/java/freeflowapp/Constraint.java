@@ -1,3 +1,4 @@
+package freeflowapp;
 public class Constraint {
 
     private int agentId;

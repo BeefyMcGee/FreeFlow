@@ -1,3 +1,4 @@
+package freeflowapp;
 import java.util.*;
 
 import javafx.animation.KeyFrame;
